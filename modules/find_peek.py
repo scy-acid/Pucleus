@@ -424,3 +424,6 @@ class SimpleCompare(PeekFinder):
             self.peeks.append(Peek(peek + self.range[0], edges, self.mca))
 
         self.flag_searched = True
+
+if __name__ == '__main__':
+
