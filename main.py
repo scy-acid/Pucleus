@@ -660,25 +660,27 @@ class MCA_MainUI(QMainWindow, Ui_MainWindow, QApplication):
             self.listWidget_libraries.takeItem(index)
 
     def do_find_peeks(self):
-        curve = self.static_get_current_curve()
-        if curve is None:
+        curve = self.static_get_current_curve()  # 获取当前选中的能谱对象
+        if curve is None:  # 若没有获取到能谱则返回
             return
         curve_plot = curve[self.file_unpack_dict["plot"]]
         curve = curve[self.file_unpack_dict["current_mca"]]
-        if not isinstance(curve, MCA):
+        if not isinstance(curve, MCA):  # 若不是MCA对象则返回
             return
-        self.do_clear_peek()
-        algorithm = self.comboBox_findPeek_algo.currentText()
-        ranges = self.static_get_section()
-        if (ranges[1] - ranges[0]) <= 1:
+        self.do_clear_peek()  # 清楚已经绘制的峰图像
+        algorithm = self.comboBox_findPeek_algo.currentText()  # 获取窗口上选择的寻峰算法
+        ranges = self.static_get_section()  # 获取当前选区
+        if (ranges[1] - ranges[0]) <= 1:  # 若选取为空，则全选k
             ranges = [0, len(curve) - 1]
         pf = []
         self.logger.DEBUG("[寻峰] 正在使用 {} 算法在 {} 区域内寻峰".format(algorithm, ranges))
+
         if algorithm == "简单比较法":
             k = self.doubleSpinBox_findPeek_sc_K.value()
             m = self.spinBox_findPeek_sc_M.value()
             ranges = [int(ele) for ele in ranges]
             pf = SimpleCompare(curve, scan_range=ranges, k=k, m=m)
+
         elif algorithm == "导数法":
             level = self.spinBox_findPeek_deri_level.value()
             dots = self.spinBox_findPeek_deri_dots.value()
@@ -688,8 +690,8 @@ class MCA_MainUI(QMainWindow, Ui_MainWindow, QApplication):
             ranges = [int(ele) for ele in ranges]
             pf = Derivative(curve, ranges, level, dots)
 
-        self.peeks = pf
-        self.static_update_findPeekInfo()
+        self.peeks = pf  # 将寻到的峰暂存到内存中
+        self.static_update_findPeekInfo()  # 更新画面以显示所寻到的峰
 
         symbol = QPainterPath()
         symbol.lineTo(0, 0)
