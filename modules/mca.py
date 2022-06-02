@@ -687,3 +687,7 @@ class Pulses(object):
             f.close()
 
         return ret
+
+if __name__ == '__main__':
+    mca = MCA("")
+    mca
